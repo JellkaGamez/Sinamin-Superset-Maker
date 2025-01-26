@@ -113,12 +113,12 @@ def get_message():
         )
 
         return stream["choices"][0]["message"]["content"]
-    except:
+    except Exception as e:
         err(f"An error occurred! {e}")
         return e
 
 messages.append(
-    {"role": "user", "content": f"Name: {superset_info['name']}\nSuperset: {superset_info['base_language']}\nFeatures: {superset_info['features']}\nStep: Init"}
+    {"role": "user", "content": f"Name: {superset_info['name']}\nSuperset: {superset_info['name']}\nFeatures: {superset_info['features']}\nStep: Init"}
 )
 
 name = get_message().strip()
@@ -129,7 +129,7 @@ warn("You will have to write some code in your own language!")
 source = None
 
 while source is None:
-    file = finput("Please input a file to continue... ")
+    file = "./output/" + finput("Please input a file from the \"output\" folder to continue... ")
 
     try:
         with open(file, "r") as f:
@@ -140,7 +140,7 @@ while source is None:
         err(f"An error occurred: {e}. Try again.")
 
 messages.append(
-    {"role": "user", "content": f"Name: {superset_info['name']}\nSuperset: {superset_info['base_language']}\nFeatures: {superset_info['features']}\nStep: Create\nSource: {source}"}
+    {"role": "user", "content": f"Name: {name}\nSuperset: {superset_info['name']}\nFeatures: {superset_info['features']}\nStep: Create\nSource: {source}"}
 )
 
 cont = True
@@ -166,7 +166,7 @@ while cont:
         # Run the console command python <name>-compiler.py <file> and capture errors
         try:
             result = subprocess.run(
-                ["python", f"{name}-compiler.py", file],
+                ["python", f"output/{name}-compiler.py", file],
                 check=True,
                 capture_output=True,
                 text=True
@@ -197,5 +197,5 @@ while cont:
         errors = finput("Errors with output (Comma Seperated): ")
 
         messages.append(
-            {"role": "user", "content": f"Features: {new_features}\nSource: {source}\nStep: Create\nErrors: {errors}\nRating: {satisfaction}"}
+            {"role": "user", "content": f"File Format: {name}\nFeatures: {new_features}\nSource: {source}\nStep: Create\nErrors: {errors}\nRating: {satisfaction}"}
         )
